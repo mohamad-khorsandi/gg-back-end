@@ -1,8 +1,11 @@
 import json
+
 from django.conf import settings
 from django.core.mail import send_mail
 from django.http import JsonResponse
 
+
+# todo utils should move to apps
 
 def send_otp_code(name, email, code):
     subject = 'کد تایید ثبت نام در GG'

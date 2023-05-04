@@ -1,39 +1,52 @@
-from django.contrib.auth import login
-from django.views import View
-from .forms import UserRegistrationForm
 import random
-from utils import send_otp_code, Response, req_to_dict
+
+from django.contrib.auth import login, logout
+from rest_framework import permissions, authentication, status
+from rest_framework import response
+from rest_framework.generics import ListAPIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+
+from utils import send_otp_code, Response
+from . import serializers
 from .models import TemporaryUser, User
 
 
-class UserSignupView(View):
-    form_class = UserRegistrationForm
+class UserRegistrationView(APIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = serializers.UserRegisterSerializer
 
     def post(self, request):
-        form = self.form_class(req_to_dict(request))
-        if not form.is_valid():
+        serializer = serializers.UserRegisterSerializer(data=request.data)
+        if not serializer.is_valid():
             return Response.bad_request()
 
-        cd = form.cleaned_data
-        random_code = random.randint(1000, 9999)
+        data = serializer.data
+        random_code = random.randint(1000, 9999)  # todo change this to str
         print(random_code)
-        send_otp_code(cd['name'], cd['email'], random_code)
+        send_otp_code(data['name'], data['email'], random_code)
 
-        last_code = TemporaryUser.objects.filter(email=cd['email'])
+        last_code = TemporaryUser.objects.filter(email=data['email'])
         if last_code:
             last_code = last_code[0]
             last_code.code = random_code
             last_code.save()
         else:
-            TemporaryUser.from_clean_data(cd, random_code).save()
+            TemporaryUser.from_clean_data(data, random_code).save()
 
         return Response.ok()
 
 
-class UserVerifyCodeView(View):
+class UserVerifyCodeView(APIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = serializers.UserVerifyCodeSerializer
 
     def post(self, request):
-        code = int(req_to_dict(request)['code'])
+        serializer = serializers.UserVerifyCodeSerializer(data=request.data)
+        if not serializer.is_valid():
+            Response.bad_request()
+        code = serializer.data['code']
+
         temp_user = TemporaryUser.objects.filter(code=code)
 
         if not len(temp_user) == 1:
@@ -47,15 +60,41 @@ class UserVerifyCodeView(View):
         return Response.ok()
 
 
-class UserLoginView(View):
+class UserLoginView(APIView):
+    permission_classes = [permissions.AllowAny]
+    authentication_classes = [authentication.SessionAuthentication]
+    serializer_class = serializers.UserLoginSerializer
 
     def post(self, request):
-        data = req_to_dict(request)
-        email = data['email']
-        password = data['password']
-        user = User.objects.filter(email=email, password=password)
+        data = request.data
+        serializer = serializers.UserLoginSerializer(data=data)
 
-        if not user:
-            return Response.unauthorized()
+        if serializer.is_valid():
+            # todo why django.contrib.auth authenticate not working?
+            user = User.objects.filter(email=data['email'], password=data['password'])
 
-        return Response.ok()
+            if user:
+                login(request, user[0])
+                return Response.ok()
+            else:
+                return Response.unauthorized()
+
+        else:
+            return Response.ok()
+
+
+class UserView(ListAPIView):
+    serializer_class = serializers.UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return User.objects.all()
+
+
+class UserLogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [authentication.SessionAuthentication]
+
+    def post(self, request):
+        logout(request)
+        return response.Response(status=status.HTTP_200_OK)
