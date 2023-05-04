@@ -1,0 +1,6 @@
+# this gitignore will only affect files under backend folder
+/env/
+/.idea/*
+/db.sqlite3
+__pycache__/
+/*/migrations/
