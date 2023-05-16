@@ -27,17 +27,18 @@ class UserManager(BaseUserManager):
         return user
 
 
-class User(AbstractUser):
-    name = models.CharField(max_length=100)
+class User(AbstractUser):  # todo rename class name?
+    name = models.CharField(max_length=100)  # todo should be name mandatory?
     email = models.EmailField(max_length=255, unique=True)
-    phone_number = models.CharField(max_length=11, unique=True)
+    phone_number = models.CharField(max_length=11, unique=True)  # todo not required
+    #is_garden_owner = models.BooleanField()
 
     # override AbstractUser fields
     objects = UserManager()
     EMAIL_FIELD = 'email'
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['phone_number', 'name']
-    username = None
+    username = None  # todo user "del" to remove attr
 
     def __str__(self):
         return self.email

@@ -1,13 +1,13 @@
 import random
 
-from django.contrib.auth import login, logout
-from rest_framework import permissions, authentication, status
-from rest_framework import response
+from rest_framework import permissions, status
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
+from rest_framework.authtoken.models import Token
+from rest_framework.response import Response
 
-from utils import send_otp_code, Response
+from utils import send_otp_code
 from . import serializers
 from .models import TemporaryUser, User
 
@@ -19,7 +19,7 @@ class UserRegistrationView(APIView):
     def post(self, request):
         serializer = serializers.UserRegisterSerializer(data=request.data)
         if not serializer.is_valid():
-            return Response.bad_request()
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
         data = serializer.data
         random_code = random.randint(1000, 9999)  # todo change this to str
@@ -34,7 +34,7 @@ class UserRegistrationView(APIView):
         else:
             TemporaryUser.from_clean_data(data, random_code).save()
 
-        return Response.ok()
+        return Response(status=status.HTTP_200_OK)
 
 
 class UserVerifyCodeView(APIView):
@@ -44,25 +44,24 @@ class UserVerifyCodeView(APIView):
     def post(self, request):
         serializer = serializers.UserVerifyCodeSerializer(data=request.data)
         if not serializer.is_valid():
-            Response.bad_request()
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         code = serializer.data['code']
 
         temp_user = TemporaryUser.objects.filter(code=code)
 
         if not len(temp_user) == 1:
-            return Response.bad_request()
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
         main_user = temp_user[0].to_user()
         main_user.save()
         temp_user.delete()
 
-        login(request, main_user)
-        return Response.ok()
+        token, created = Token.objects.get_or_create(user=main_user)
+        return Response(data={'token': token.key}, status=status.HTTP_200_OK)
 
 
 class UserLoginView(APIView):
     permission_classes = [permissions.AllowAny]
-    authentication_classes = [authentication.SessionAuthentication]
     serializer_class = serializers.UserLoginSerializer
 
     def post(self, request):
@@ -70,22 +69,21 @@ class UserLoginView(APIView):
         serializer = serializers.UserLoginSerializer(data=data)
 
         if serializer.is_valid():
-            # todo why django.contrib.auth authenticate not working?
             user = User.objects.filter(email=data['email'], password=data['password'])
 
             if user:
-                login(request, user[0])
-                return Response.ok()
+                token, created = Token.objects.get_or_create(user=user[0])
+                return Response({'token': token.key})
             else:
-                return Response.unauthorized()
+                return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         else:
-            return Response.ok()
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserView(ListAPIView):
+    permission_classes = [permissions.AllowAny]
     serializer_class = serializers.UserSerializer
-    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return User.objects.all()
@@ -93,8 +91,6 @@ class UserView(ListAPIView):
 
 class UserLogoutView(APIView):
     permission_classes = [IsAuthenticated]
-    authentication_classes = [authentication.SessionAuthentication]
 
     def post(self, request):
-        logout(request)
-        return response.Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_200_OK)
