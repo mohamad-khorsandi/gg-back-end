@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 
     'accounts.apps.AccountsConfig',  # todo why not simple app name?
     'home.apps.HomeConfig',
+    'plants.apps.PlantsConfig',
 ]
 
 MIDDLEWARE = [
