@@ -15,7 +15,7 @@ class Plant(models.Model):
     growth = models.IntegerField()
     pet_compatible = models.BooleanField()
     allergy_compatible = models.BooleanField()
-    attention_need = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(7)])
+    attention_need = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(3)])
     edible = models.BooleanField()
     wikipedia_link = models.URLField()
     special_condition = models.TextField()
