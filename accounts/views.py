@@ -17,6 +17,7 @@ class UserRegistrationView(APIView):
     serializer_class = serializers.UserRegisterSerializer
 
     def post(self, request):
+        #todo check that phone number is not repeated
         serializer = serializers.UserRegisterSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -73,7 +74,7 @@ class UserLoginView(APIView):
 
             if user:
                 token, created = Token.objects.get_or_create(user=user[0])
-                return Response({'token': token.key})
+                return Response({'token': token.key}, status=status.HTTP_200_OK)
             else:
                 return Response(status=status.HTTP_401_UNAUTHORIZED)
 
