@@ -18,6 +18,7 @@ class ExploreAPI(ListAPIView):
 
     def get_queryset(self):
         filter = {}
+        filter['is_valid'] = True
         for field in self.lookup_url_kwarg:
             if self.request.query_params.get(field):
                 filter[field] = self.request.query_params[field]
