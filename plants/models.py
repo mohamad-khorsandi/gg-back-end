@@ -62,8 +62,8 @@ class Plant(models.Model):
     allergy_compatible = models.BooleanField()
     edible = models.BooleanField()
     special_condition = models.TextField(null=True, blank=True)
-    wikipedia_link = models.URLField()
-    main_img = models.ImageField(upload_to='./plants/Main_images/', default=None)
+    wikipedia_link = models.URLField(null=True, blank=True)
+    main_img = models.ImageField(upload_to='./plants/Main_images/', default=None, null=True, blank=True)
 
     def __str__(self):
         return self.name
