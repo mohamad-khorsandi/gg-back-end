@@ -55,6 +55,7 @@ class Plant(models.Model):
     growth = models.PositiveIntegerField(default=1, choices=GROWTH_CHOICES)
     attention_need = models.PositiveIntegerField(default=1, choices=ATTENTION_NEED_CHOICES)
     season = models.PositiveIntegerField(default=1, choices=SEASON_CHOICES)
+    is_valid = models.BooleanField(default=False)
     is_seasonal = models.BooleanField(default=False)
     fragrance = models.BooleanField()
     pet_compatible = models.BooleanField()
