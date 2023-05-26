@@ -17,7 +17,6 @@ class ExploreAPI(ListAPIView):
                         'allergy_compatible', 'edible', ]
 
     def get_queryset(self):
-        queryset = Plant.objects.filter(is_valid=True)
         filter = {}
         for field in self.lookup_url_kwarg:
             if self.request.query_params.get(field):
