@@ -47,27 +47,27 @@ class Plant(models.Model):
     name = models.CharField(max_length=50, null=False, blank=False)
     description = models.TextField(null=True, blank=True)
     maintenance = models.TextField(null=True, blank=True)
-    fragrance = models.BooleanField()
-    type = models.CharField(max_length=50)
+    type = models.PositiveIntegerField(default=1, choices=PLANT_CHOICES)
     light_intensity = models.PositiveIntegerField(default=1, choices=LIGHT_CHOICES)
     temperature = models.PositiveIntegerField(default=1, choices=TEMPERATURE_CHOICES)
     location_type = models.PositiveIntegerField(default=1, choices=LOCATION_TYPE_CHOICES)
     water = models.PositiveIntegerField(default=1, choices=WATER_CHOICES)
     growth = models.PositiveIntegerField(default=1, choices=GROWTH_CHOICES)
-    pet_compatible = models.BooleanField()
-    allergy_compatible = models.BooleanField()
     attention_need = models.PositiveIntegerField(default=1, choices=ATTENTION_NEED_CHOICES)
-    edible = models.BooleanField()
-    wikipedia_link = models.URLField()
-    special_condition = models.TextField(null=True, blank=True)
     season = models.PositiveIntegerField(default=1, choices=SEASON_CHOICES)
     is_seasonal = models.BooleanField(default=False)
-    main_img = models.ImageField(upload_to='/plants/Main_images/')
+    fragrance = models.BooleanField()
+    pet_compatible = models.BooleanField()
+    allergy_compatible = models.BooleanField()
+    edible = models.BooleanField()
+    special_condition = models.TextField(null=True, blank=True)
+    wikipedia_link = models.URLField()
+    main_img = models.ImageField(upload_to='./plants/Main_images/', default=None)
 
     def __str__(self):
         return self.name
 
 
 class PlantImage(models.Model):
-    img = models.ImageField(upload_to='/plants/images/')
+    img = models.ImageField(upload_to='./plants/images/')
     plant = models.ForeignKey(Plant, on_delete=models.CASCADE)
