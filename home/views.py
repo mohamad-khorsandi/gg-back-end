@@ -7,7 +7,7 @@ from plants.models import Plant
 from plants.serializers import PlantSerializer
 
 
-class ExploreAPI(ListAPIView):
+class PlantFilterAPI(ListAPIView):
     serializer_class = PlantSerializer
     permission_classes = [AllowAny]
     # It can be safely remove if we only use get_queryset function

@@ -3,5 +3,5 @@ from . import views
 
 app_name = 'Home'
 urlpatterns = [
-    path('home_explore_api/', views.ExploreAPI.as_view(), name='explore_api'),
+    path('home_explore_api/', views.PlantFilterAPI.as_view(), name='explore_api'),
 ]
