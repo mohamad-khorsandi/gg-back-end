@@ -1,7 +1,7 @@
 from django.urls import path, include
 from . import views
 
-app_name = 'home'
+app_name = 'Home'
 urlpatterns = [
-    path('', views.HomeView.as_view(), name='home'),
+    path('home_explore_api/', views.PlantFilterAPI.as_view(), name='explore_api'),
 ]
