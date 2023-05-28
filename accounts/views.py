@@ -9,7 +9,7 @@ from rest_framework.response import Response
 
 from utils import send_otp_code
 from . import serializers
-from .models import TemporaryUser, User
+from .models import TemporaryUser, NormalUser
 
 
 class UserRegistrationView(APIView):
@@ -70,7 +70,7 @@ class UserLoginView(APIView):
         serializer = serializers.UserLoginSerializer(data=data)
 
         if serializer.is_valid():
-            user = User.objects.filter(email=data['email'], password=data['password'])
+            user = NormalUser.objects.filter(email=data['email'], password=data['password'])
 
             if user:
                 token, created = Token.objects.get_or_create(user=user[0])
@@ -87,7 +87,7 @@ class UserView(ListAPIView):
     serializer_class = serializers.UserSerializer
 
     def get_queryset(self):
-        return User.objects.all()
+        return NormalUser.objects.all()
 
 
 class UserLogoutView(APIView):

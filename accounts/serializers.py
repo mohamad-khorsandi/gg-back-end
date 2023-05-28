@@ -1,11 +1,11 @@
 from rest_framework import serializers
 
-from accounts.models import User
+from accounts.models import NormalUser
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = NormalUser
         fields = ['email', 'name', 'phone_number', 'password']
 
 
@@ -20,5 +20,5 @@ class UserVerifyCodeSerializer(serializers.Serializer):
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = NormalUser
         fields = '__all__'

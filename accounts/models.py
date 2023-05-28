@@ -1,53 +1,80 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class UserManager(BaseUserManager):
 
-    def create_user(self, phone_number, email, name, password):
-        if not phone_number:
-            raise ValueError('user must have phone number')
-
-        if not email:
-            raise ValueError('user must have email')
-
-        if not name:
-            raise ValueError('user must have = name')
-
-        user = self.model(phone_number=phone_number, email=self.normalize_email(email), name=name)
+    def create_user(self, name, email, password, phone_number=None):
+        user = self.model(name=name, email=email, phone_number=phone_number) # todo normalize email
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, phone_number, email, name, password):
-        user = self.create_user(phone_number, email, name, password)
+    def create_superuser(self, name, email, password, phone_number=None):
+        user = self.create_user(name=name, email=email, password=password, phone_number=phone_number)
         user.is_admin = True
         user.is_staff = True
+        user.is_superuser = True
         user.save(using=self._db)
         return user
 
 
-class User(AbstractUser):  # todo rename class name?
-    name = models.CharField(max_length=100)  # todo should be name mandatory?
+class NormalUser(AbstractUser):
+    name = models.CharField(max_length=100)
     email = models.EmailField(max_length=255, unique=True)
-    phone_number = models.CharField(max_length=11, unique=True)  # todo not required
-    #is_garden_owner = models.BooleanField()
+    phone_number = models.CharField(max_length=11, null=True, blank=True)
+    is_garden_owner = models.BooleanField(default=False)
+    image = models.ImageField(null=True, blank=True)
 
     # override AbstractUser fields
     objects = UserManager()
     EMAIL_FIELD = 'email'
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['phone_number', 'name']
-    username = None  # todo user "del" to remove attr
+    REQUIRED_FIELDS = ['name']
+    username = None
 
     def __str__(self):
         return self.email
 
-    def has_perm(self, perm, obj=None):
-        return True
 
-    def has_module_perms(self, app_label):
-        return True
+# -----------------------------------------------------------------------------------------
+class GardenOwnerManger(BaseUserManager):
+    def get_queryset(self, *args, **kwargs):
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = queryset.filter(is_garden_owner=True)
+        return queryset
+
+
+class GardenOwnerProfile(models.Model):
+    user = models.OneToOneField(NormalUser, on_delete=models.CASCADE)
+    national_id = models.IntegerField(null=True, blank=True)
+    business_id = models.IntegerField(null=True, blank=True)
+    license = models.ImageField(null=True, blank=True)
+    is_verified = models.BooleanField(default=False)
+    #todo garden = models.ForeignKey(Garden, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.email
+
+
+class GardenOwner(NormalUser):
+    class Meta:
+        proxy = True
+
+    objects = GardenOwnerManger()
+
+    def save(self, *args, **kwargs):
+        self.is_garden_owner = True
+        return super().save(*args, **kwargs)
+
+
+@receiver(post_save, sender=GardenOwner)
+def garden_owner_creator(sender, instance, created, **kwargs):
+    if created and instance.is_garden_owner:
+        GardenOwnerProfile.objects.create(user=instance)
+# -----------------------------------------------------------------------------------------
 
 
 class TemporaryUser(models.Model):
@@ -65,6 +92,5 @@ class TemporaryUser(models.Model):
     def from_clean_data(cls, cd, random_code):
         return TemporaryUser(email=cd['email'], phone_number= cd['phone_number'], name=cd['name'], password=cd['password'], code=random_code)
 
-    def to_user(self) -> User:
-        return User(email=self.email, phone_number=self.phone_number, name=self.name, password=self.password)
-
+    def to_user(self) -> NormalUser:
+        return NormalUser(email=self.email, phone_number=self.phone_number, name=self.name, password=self.password)
