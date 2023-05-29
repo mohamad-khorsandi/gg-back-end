@@ -10,5 +10,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('accounts/', include('accounts.urls', namespace='accounts')),
-    path('plants/', include('plants.urls', namespace='plants'))
+    path('plants/', include('plants.urls', namespace='plants')),
+    path('gardens/', include('garden.urls', namespace='garden')),
 ]
