@@ -5,7 +5,6 @@ from django.dispatch import receiver
 
 
 class UserManager(BaseUserManager):
-
     def create_user(self, name, email, password, phone_number=None):
         user = self.model(name=name, email=email, phone_number=phone_number) # todo normalize email
         user.set_password(password)
@@ -33,6 +32,8 @@ class NormalUser(AbstractUser):
     EMAIL_FIELD = 'email'
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name']
+    first_name = None
+    last_name = None
     username = None
 
     def __str__(self):
