@@ -15,10 +15,9 @@ class PlantFilterAPI(ListAPIView):
                         'allergy_compatible', 'edible', ]
 
     def get_queryset(self):
-        filter = {}
-        filter['is_valid'] = True
+        filter = {'is_valid': True}
         for field in self.lookup_url_kwarg:
-            if self.request.query_params.get(field):
+            if self.request.query_params.get(field) and self.request.query_params[field] != '':
                 filter[field] = self.request.query_params[field]
         return Plant.objects.filter(**filter)
 
