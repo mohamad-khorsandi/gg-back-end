@@ -9,5 +9,6 @@ class GardenAPI(RetrieveAPIView):
     serializer_class = GardenSerializer
     permission_classes = [AllowAny]
     queryset = Garden.objects.filter(is_verified=True)
+    lookup_field = 'id'
 
 
