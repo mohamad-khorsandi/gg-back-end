@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     'accounts.apps.AccountsConfig',
     'plants.apps.PlantsConfig',
+    'garden.apps.GardenConfig',
 ]
 
 MIDDLEWARE = [
