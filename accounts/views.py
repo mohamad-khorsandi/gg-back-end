@@ -1,7 +1,7 @@
 import random
 
 from rest_framework import permissions, status
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
@@ -82,12 +82,24 @@ class UserLoginView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserView(ListAPIView):
+class GetUser(RetrieveAPIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = serializers.UserSerializer
+    queryset = NormalUser.objects.filter(is_active=True)
+    lookup_field = 'id'
 
-    def get_queryset(self):
-        return NormalUser.objects.all()
+
+class UpdateUser(UpdateAPIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = serializers.UserSerializer
+    queryset = NormalUser.objects.filter(is_active=True)
+    lookup_field = 'id'
+
+
+class UserList(ListAPIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = serializers.UserSerializer
+    queryset = NormalUser.objects.all()
 
 
 class UserLogoutView(APIView):

@@ -21,4 +21,4 @@ class UserVerifyCodeSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = NormalUser
-        fields = '__all__'
+        fields = ['id', 'email', 'name', 'phone_number', 'is_garden_owner', 'image']
