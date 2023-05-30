@@ -54,7 +54,6 @@ class GardenOwnerProfile(models.Model):
     business_id = models.IntegerField(null=True, blank=True)
     license = models.ImageField(null=True, blank=True)
     is_verified = models.BooleanField(default=False)
-    #todo garden = models.ForeignKey(Garden, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.user.email

@@ -11,7 +11,7 @@ class Garden(models.Model):
     address = models.TextField()
     avg_score = models.FloatField(default=0.0, validators=[MinValueValidator(0.0), MaxValueValidator(5.0)])
     location = models.URLField(null=True, blank=True)
-    profile = models.ImageField(null=True, blank=True)
+    profile_photo = models.ImageField(null=True, blank=True)
     is_verified = models.BooleanField(default=False)
 
     def __str__(self):
