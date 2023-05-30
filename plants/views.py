@@ -1,8 +1,10 @@
-from rest_framework.generics import ListAPIView
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework import permissions, status
-from plants.models import Plant
+from rest_framework import permissions
+from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.permissions import AllowAny
+
 from plants.serializers import PlantSerializer
+from . import serializers
+from .models import Plant
 
 
 class PlantFilterAPI(ListAPIView):
@@ -21,3 +23,9 @@ class PlantFilterAPI(ListAPIView):
                 filter[field] = self.request.query_params[field]
         return Plant.objects.filter(**filter)
 
+
+class PlantDetails(RetrieveAPIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = serializers.PlantSerializer
+    queryset = Plant.objects.filter(is_valid=True)
+    lookup_field = 'id'

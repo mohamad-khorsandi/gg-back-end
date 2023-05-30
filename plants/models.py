@@ -72,3 +72,5 @@ class Plant(models.Model):
 class PlantImage(models.Model):
     img = models.ImageField(upload_to='./plants/images/')
     plant = models.ForeignKey(Plant, on_delete=models.CASCADE)
+
+
