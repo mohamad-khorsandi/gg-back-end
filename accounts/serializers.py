@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from accounts.models import NormalUser
+from accounts.models import NormalUser, GardenOwnerProfile
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
@@ -22,3 +22,9 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = NormalUser
         fields = ['id', 'email', 'name', 'phone_number', 'is_garden_owner', 'image']
+
+
+class GardenOwnerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GardenOwnerProfile
+        fields = '__all__'
