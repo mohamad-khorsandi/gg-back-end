@@ -63,12 +63,12 @@ class Plant(models.Model):
     edible = models.BooleanField()
     special_condition = models.TextField(null=True, blank=True)
     wikipedia_link = models.URLField(null=True, blank=True)
-    main_img = models.ImageField(upload_to='./plants/Main_images/', default=None, null=True, blank=True)
+    main_img = models.ImageField(upload_to='static/plants/main_images/', default=None, null=True, blank=True)
 
     def __str__(self):
         return self.name
 
 
 class PlantImage(models.Model):
-    img = models.ImageField(upload_to='./plants/images/')
+    img = models.ImageField(upload_to='static/plants/images/')
     plant = models.ForeignKey(Plant, on_delete=models.CASCADE)

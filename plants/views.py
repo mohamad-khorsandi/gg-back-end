@@ -1,11 +1,10 @@
 from rest_framework.generics import ListAPIView
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework import permissions, status
+from rest_framework.permissions import AllowAny
 from plants.models import Plant
 from plants.serializers import PlantSerializer
 
 
-class PlantFilterAPI(ListAPIView):
+class PlantFilter(ListAPIView):
     serializer_class = PlantSerializer
     permission_classes = [AllowAny]
     # It can be safely remove if we only use get_queryset function
