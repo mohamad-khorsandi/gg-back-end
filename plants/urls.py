@@ -5,4 +5,5 @@ from . import views
 app_name = 'plants'#todo what is this
 urlpatterns = [
     path('filter/', views.PlantFilter.as_view(), name='explore_api'),
+    path('<int:id>', views.PlantDetails.as_view(), name='plant_details'),
 ]
