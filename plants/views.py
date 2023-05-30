@@ -1,13 +1,10 @@
-from rest_framework import permissions
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.permissions import AllowAny
-
 from plants.serializers import PlantSerializer
-from . import serializers
 from .models import Plant
 
 
-class PlantFilterAPI(ListAPIView):
+class PlantFilter(ListAPIView):
     serializer_class = PlantSerializer
     permission_classes = [AllowAny]
     # It can be safely remove if we only use get_queryset function
@@ -25,7 +22,7 @@ class PlantFilterAPI(ListAPIView):
 
 
 class PlantDetails(RetrieveAPIView):
-    permission_classes = [permissions.AllowAny]
-    serializer_class = serializers.PlantSerializer
+    permission_classes = [AllowAny]
+    serializer_class = PlantSerializer
     queryset = Plant.objects.filter(is_valid=True)
     lookup_field = 'id'
