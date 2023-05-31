@@ -27,7 +27,7 @@ class GardenAPI(RetrieveAPIView):
 
 class GardenUpdateAPI(UpdateAPIView):
     serializer_class = GardenUpdateSerializer
-    permission_classes = [IsAuthenticated, GardenOwnerPerm]  # Todo: Change it to IsAuthenticated
+    permission_classes = [IsAuthenticated, GardenOwnerPerm]
 
     def get_object(self):
         user = GardenOwnerProfile.objects.filter(user=self.request.user)[0]
@@ -46,7 +46,7 @@ class GardenUpdateAPI(UpdateAPIView):
 
 class GardenCreateAPI(CreateAPIView):
     serializer_class = GardenCreateSerializer
-    permission_classes = [IsAuthenticated, GardenOwnerPerm]  # Todo: Change it to IsAuthenticated
+    permission_classes = [IsAuthenticated, GardenOwnerPerm]
 
     def get_object(self):
         try:
@@ -73,7 +73,7 @@ class GardenCreateAPI(CreateAPIView):
 
 class GardenDeleteAPI(DestroyAPIView):
     serializer_class = GardenSerializer
-    permission_classes = [IsAuthenticated, GardenOwnerPerm]  # Todo: Change it to IsAuthenticated
+    permission_classes = [IsAuthenticated, GardenOwnerPerm]
 
     def get_object(self):
         user = GardenOwnerProfile.objects.filter(user=self.request.user)[0]
