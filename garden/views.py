@@ -4,7 +4,15 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import GardenSerializer, GardenUpdateSerializer, GardenCreateSerializer
 from accounts.models import GardenOwnerProfile
+from .models import Garden
 from .permissions import GardenOwnerPerm
+
+
+class GardenGetIDAPI(RetrieveAPIView):
+    serializer_class = GardenSerializer
+    permission_classes = [AllowAny]
+    queryset = Garden.objects.filter(is_verified=True)
+    lookup_field = 'id'
 
 
 class GardenAPI(RetrieveAPIView):
