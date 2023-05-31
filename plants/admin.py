@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Plant, PlantImage, PlantUserRelationship
+from .models import Plant, PlantImage
 
 
 @admin.register(Plant)
@@ -13,4 +13,4 @@ class PlantImageAdmin(admin.ModelAdmin):
     list_display = ('plant',)
 
 
-admin.site.register(PlantUserRelationship)
+
