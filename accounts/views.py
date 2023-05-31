@@ -1,7 +1,6 @@
 import random
-
 from rest_framework import permissions, status
-from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView
+from rest_framework.generics import ListAPIView, UpdateAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
@@ -17,10 +16,9 @@ class UserRegistrationView(APIView):
     serializer_class = serializers.UserRegisterSerializer
 
     def post(self, request):
-        #todo check that phone number is not repeated
         serializer = serializers.UserRegisterSerializer(data=request.data)
         if not serializer.is_valid():
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         data = serializer.data
         random_code = random.randint(1000, 9999)  # todo change this to str
@@ -83,7 +81,7 @@ class UserLoginView(APIView):
 
 
 class GetUser(RetrieveAPIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.AllowAny]#todo
     serializer_class = serializers.UserSerializer
     queryset = NormalUser.objects.filter(is_active=True)
     lookup_field = 'id'

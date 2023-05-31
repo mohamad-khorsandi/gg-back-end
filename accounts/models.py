@@ -85,13 +85,19 @@ class TemporaryUser(models.Model):
     name = models.CharField(max_length=100)
     password = models.CharField(max_length=128)
     phone_number = models.CharField(max_length=11, unique=True)
+    is_garden_owner = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'{self.email} - {self.code} - {self.created}'
+        return f'{self.email} - {self.code} - {self.created} - {self.is_garden_owner}'
 
     @classmethod
     def from_clean_data(cls, cd, random_code):
-        return TemporaryUser(email=cd['email'], phone_number= cd['phone_number'], name=cd['name'], password=cd['password'], code=random_code)
+        return TemporaryUser(email=cd['email'], phone_number= cd['phone_number'],
+                             name=cd['name'], password=cd['password'], code=random_code,
+                             is_garden_owner=cd['is_garden_owner'])
 
-    def to_user(self) -> NormalUser:
-        return NormalUser(email=self.email, phone_number=self.phone_number, name=self.name, password=self.password)
+    def to_user(self):
+        if self.is_garden_owner:
+            return GardenOwner(email=self.email, phone_number=self.phone_number, name=self.name, password=self.password)
+        else:
+            return NormalUser(email=self.email, phone_number=self.phone_number, name=self.name, password=self.password)
