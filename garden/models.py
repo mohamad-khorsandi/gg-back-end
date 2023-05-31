@@ -1,10 +1,12 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator, MinLengthValidator, MaxLengthValidator
 from accounts.models import GardenOwnerProfile
+from plants.models import Plant
 
 
 class Garden(models.Model):
     garden_owner = models.OneToOneField(GardenOwnerProfile, on_delete=models.CASCADE)
+    plants = models.ManyToManyField(Plant, null=True, blank=True)  # Todo: remove null
     name = models.CharField(max_length=50)
     phone_number = models.CharField(max_length=11, validators=[MinLengthValidator(11)])
     business_code = models.CharField(max_length=12, validators=[MinLengthValidator(12)])
