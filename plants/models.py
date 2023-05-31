@@ -1,5 +1,4 @@
 from django.db import models
-from accounts.models import NormalUser
 
 # Create your models here.
 class Plant(models.Model):
@@ -64,6 +63,7 @@ class Plant(models.Model):
     special_condition = models.TextField(null=True, blank=True)
     wikipedia_link = models.URLField(null=True, blank=True)
     main_img = models.ImageField(upload_to='static/plants/main_images/', default=None, null=True, blank=True)
+    user = models.ForeignKey('accounts.NormalUser', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -72,8 +72,3 @@ class Plant(models.Model):
 class PlantImage(models.Model):
     img = models.ImageField(upload_to='static/plants/images/')
     plant = models.ForeignKey(Plant, on_delete=models.CASCADE)
-
-
-class PlantUserRelationship(models.Model):
-    user = models.OneToOneField(NormalUser, on_delete=models.CASCADE)
-    saved_plants = models.ManyToManyField(Plant)
