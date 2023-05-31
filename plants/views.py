@@ -1,7 +1,9 @@
 from rest_framework.generics import ListAPIView, RetrieveAPIView
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.views import APIView
+
 from plants.serializers import PlantSerializer
-from .models import Plant
+from .models import Plant, PlantUserRelationship
 
 
 class PlantFilter(ListAPIView):
@@ -26,3 +28,11 @@ class PlantDetails(RetrieveAPIView):
     serializer_class = PlantSerializer
     queryset = Plant.objects.filter(is_valid=True)
     lookup_field = 'id'
+
+class SavedPlantList(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = PlantSerializer
+
+    def put(self, request):
+        user = request.user
+        relation = PlantUserRelationship()
