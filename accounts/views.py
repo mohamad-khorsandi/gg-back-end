@@ -1,7 +1,8 @@
 import random
 from rest_framework import permissions, status
+from rest_framework.authentication import BasicAuthentication, TokenAuthentication
 from rest_framework.generics import ListAPIView, UpdateAPIView, RetrieveAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
@@ -12,7 +13,7 @@ from .models import TemporaryUser, NormalUser
 
 
 class UserRegistrationView(APIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [AllowAny]
     serializer_class = serializers.UserRegisterSerializer
 
     def post(self, request):
@@ -37,7 +38,7 @@ class UserRegistrationView(APIView):
 
 
 class UserVerifyCodeView(APIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [AllowAny]
     serializer_class = serializers.UserVerifyCodeSerializer
 
     def post(self, request):
@@ -60,7 +61,7 @@ class UserVerifyCodeView(APIView):
 
 
 class UserLoginView(APIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [AllowAny]
     serializer_class = serializers.UserLoginSerializer
 
     def post(self, request):
@@ -81,21 +82,25 @@ class UserLoginView(APIView):
 
 
 class GetUser(RetrieveAPIView):
-    permission_classes = [permissions.AllowAny]#todo
+    permission_classes = [IsAuthenticated]  # no need to be self auth
     serializer_class = serializers.UserSerializer
     queryset = NormalUser.objects.filter(is_active=True)
-    lookup_field = 'id'
+
+    def get_object(self):
+        return self.request.user
 
 
 class UpdateUser(UpdateAPIView):
-    permission_classes = [permissions.AllowAny]
-    serializer_class = serializers.UserSerializer
     queryset = NormalUser.objects.filter(is_active=True)
-    lookup_field = 'id'
+    serializer_class = serializers.UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
 
 
 class UserList(ListAPIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [AllowAny]
     serializer_class = serializers.UserSerializer
     queryset = NormalUser.objects.all()
 
@@ -105,3 +110,4 @@ class UserLogoutView(APIView):
 
     def post(self, request):
         return Response(status=status.HTTP_200_OK)
+
