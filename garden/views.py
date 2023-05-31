@@ -1,10 +1,10 @@
 from rest_framework.generics import RetrieveAPIView, UpdateAPIView, CreateAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Garden
 from .serializers import GardenSerializer, GardenUpdateSerializer, GardenCreateSerializer
+from accounts.models import GardenOwnerProfile
 
 
 class GardenAPI(RetrieveAPIView):
@@ -17,19 +17,26 @@ class GardenAPI(RetrieveAPIView):
 class GardenUpdateAPI(UpdateAPIView):
     serializer_class = GardenUpdateSerializer
     permission_classes = [AllowAny]  # Todo: Change it to IsAuthenticated
-    queryset = Garden.objects.filter(is_verified=True)
+    queryset = Garden.objects.filter()
     lookup_field = 'id'
 
     def update(self, request, *args, **kwargs):
         data = request.data
+        data['is_verified'] = False
         user = request.user
-        if user.is_garden_owner:  # Todo: Chang it if needed
-            garden = self.get_object()
-            if user.objects.garden == garden:
-                serializer = self.get_serializer(data=data)
-                serializer.is_valid(raise_exception=True)
-                self.perform_update(serializer)  # todo: check if it is correct
-            return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+        if user.is_garden_owner:
+            garden = Garden.objects.filter(id=self.kwargs['id'])[0]
+            user = GardenOwnerProfile.objects.filter(user=user)[0]
+            try:
+                if user.garden == garden:
+                    serializer = self.get_serializer(garden, data=data)
+                    serializer.is_valid(raise_exception=True)
+                    serializer.save()
+                    return Response(data=data, status=status.HTTP_200_OK)
+                return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+            except Exception as e:
+                print(repr(e))
+                return Response(data=data, status=status.HTTP_403_FORBIDDEN)
         return Response(data=data, status=status.HTTP_403_FORBIDDEN)
 
 
@@ -40,13 +47,17 @@ class GardenCreateAPI(CreateAPIView):
     def create(self, request, *args, **kwargs):
         data = request.data
         user = request.user
-        if user.is_garden_owner:  # Todo: Chang it if needed
-            if user.objects.garden is None:
-                data['garden_owner'] = request.user
+        if user.is_garden_owner:
+            user = GardenOwnerProfile.objects.filter(user=user)[0]
+            try:
+                garden = user.garden_set
+                return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+            except:
+                data['garden_owner'] = request.user.id
                 serializer = self.get_serializer(data=data)
                 serializer.is_valid(raise_exception=True)
-                self.perform_create(serializer)  # todo: checl if it is correct
-            return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+                self.perform_create(serializer)
+                return Response(data=data, status=status.HTTP_201_CREATED)
         return Response(data=data, status=status.HTTP_403_FORBIDDEN)
 
 
@@ -60,8 +71,13 @@ class GardenDeleteAPI(DestroyAPIView):
         data = request.data
         user = request.user
         if user.is_garden_owner:
-            garden = self.get_object()
-            if garden == user.objects.garden:
-                self.perform_destroy(garden)
-            return Response(data=data, status=status.HTTP_403_FORBIDDEN)
+            garden = Garden.objects.filter(id=self.kwargs['id'])[0]
+            user = GardenOwnerProfile.objects.filter(user=user)[0]
+            try:
+                if garden == user.garden:
+                    self.perform_destroy(garden)
+                    return Response(data=data, status=status.HTTP_200_OK)
+                return Response(data=data, status=status.HTTP_403_FORBIDDEN)
+            except:
+                return Response(data=data, status=status.HTTP_403_FORBIDDEN)
         return Response(data=data, status=status.HTTP_403_FORBIDDEN)
