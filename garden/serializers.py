@@ -16,11 +16,12 @@ class GardenSerializer(serializers.ModelSerializer):
 class GardenUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Garden
-        exclude = ['id', 'garden_owner', 'business_code', 'address', 'avg_score', 'location', 'phone_number']
+        exclude = ['id', 'garden_owner', 'business_code', 'address', 'avg_score', 'location', 'phone_number',
+                   'is_verified', ]
 
 
 class GardenCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Garden
-        exclude = ['is_verified',]
+        exclude = ['is_verified', ]
