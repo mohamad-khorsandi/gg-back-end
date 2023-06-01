@@ -1,6 +1,5 @@
 from django.db import models
 
-
 # Create your models here.
 class Plant(models.Model):
     LIGHT_CHOICES = [
@@ -72,5 +71,3 @@ class Plant(models.Model):
 class PlantImage(models.Model):
     img = models.ImageField(upload_to='static/plants/images/')
     plant = models.ForeignKey(Plant, on_delete=models.CASCADE)
-
-

@@ -1,7 +1,9 @@
-from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+
+from plants.models import Plant
 
 
 class UserManager(BaseUserManager):
@@ -26,6 +28,7 @@ class NormalUser(AbstractUser):
     phone_number = models.CharField(max_length=11, null=True, blank=True)
     is_garden_owner = models.BooleanField(default=False)
     image = models.ImageField(null=True, blank=True)
+    saved_plants = models.ManyToManyField(Plant, blank=True)
 
     # override AbstractUser fields
     objects = UserManager()
@@ -100,3 +103,4 @@ class TemporaryUser(models.Model):
             return GardenOwner(email=self.email, phone_number=self.phone_number, name=self.name, password=self.password)
         else:
             return NormalUser(email=self.email, phone_number=self.phone_number, name=self.name, password=self.password)
+

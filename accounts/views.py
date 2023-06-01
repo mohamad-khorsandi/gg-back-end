@@ -1,12 +1,11 @@
 import random
-from rest_framework import permissions, status
-from rest_framework.authentication import BasicAuthentication, TokenAuthentication
+from rest_framework import status
+from rest_framework.authtoken.models import Token
 from rest_framework.generics import ListAPIView, UpdateAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.views import APIView
-from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
-
+from rest_framework.views import APIView
+from plants.models import Plant
 from utils import send_otp_code
 from . import serializers
 from .models import TemporaryUser, NormalUser
@@ -111,3 +110,14 @@ class UserLogoutView(APIView):
     def post(self, request):
         return Response(status=status.HTTP_200_OK)
 
+
+class SavedPlantList(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request, id_plant):
+        user = request.user
+        plant = Plant.objects.filter(id=id_plant)
+        if plant in user.saved_plants.all():
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        user.saved_plants.add(plant[0])
+        return Response(status=status.HTTP_200_OK)
