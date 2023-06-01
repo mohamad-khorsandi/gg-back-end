@@ -1,9 +1,9 @@
 from rest_framework import serializers
 from .models import GardenScore
-from accounts.serilaizers import UserScoreSerializer
+from accounts.serializers import UserScoreSerializer
 
 
-class ScoreSerializer(serializers.Serializer):
+class ScoreSerializer(serializers.ModelSerializer):
     user = UserScoreSerializer()
 
     class Meta:
