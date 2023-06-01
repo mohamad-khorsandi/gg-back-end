@@ -121,4 +121,3 @@ class SavedPlantList(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         user.saved_plants.add(plant[0])
         return Response(status=status.HTTP_200_OK)
-        # saved_plants = relation.saved_plants.all()
