@@ -30,6 +30,12 @@ class GardenOwnerSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+
+class UserScoreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NormalUser
+        fields = ['name', 'image']
+
 class UserDefaultConditionSerializer(serializers.ModelSerializer):
     class Meta:
         model = NormalUser
@@ -40,3 +46,4 @@ class UserDefaultConditionSerializer(serializers.ModelSerializer):
 class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
+
