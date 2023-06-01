@@ -19,4 +19,3 @@ class NormalUserAdmin(admin.ModelAdmin):
 
 
 admin.site.unregister(Group)
-# admin.site.register(PlantUserRelationship)
