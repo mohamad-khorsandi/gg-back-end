@@ -13,6 +13,7 @@ urlpatterns = [
     path('update-user/', views.UpdateUser.as_view(), name='update_user'),
     path('update-GardenOwner/', views.UpdateGardenOwner.as_view(), name='update_FardenOwner'),
     path('bookmark-plant/<int:id_plant>', views.SavedPlantList.as_view(), name='saved_plant_list'),
-    path('set_default_condition/', views.UserSetDefaultConditionView.as_view(), name='set_default_condition'),
-    path('change_password/', views.ChangePasswordView.as_view(), name='change_password'),
+    path('remove-saved-plant/<int:id_plant>', views.RemoveSavedPlantView.as_view(), name='remove_saved_plant'),
+    path('set-default-condition/', views.UserSetDefaultConditionView.as_view(), name='set_default_condition'),
+    path('change-password/', views.ChangePasswordView.as_view(), name='change_password'),
 ]

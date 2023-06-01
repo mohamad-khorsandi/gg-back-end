@@ -176,3 +176,15 @@ class ChangePasswordView(APIView):
             return Response({'detail': 'Password changed successfully.'}, status=status.HTTP_200_OK)
 
         return
+
+
+class RemoveSavedPlantView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, id_plant):
+        try:
+            plant = request.user.saved_plants.get(id=id_plant)
+        except Plant.DoesNotExist:
+            return Response('The plant is not in your saved plant list.', status=400)
+        request.user.saved_plants.remove(plant)
+        return Response('The plant has been removed from your saved plant list.', status=204)
