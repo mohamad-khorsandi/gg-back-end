@@ -45,7 +45,7 @@ class NormalUser(AbstractUser):
     email = models.EmailField(max_length=255, unique=True)
     phone_number = models.CharField(max_length=11, null=True, blank=True)
     is_garden_owner = models.BooleanField(default=False)
-    image = models.ImageField(null=True, blank=True)
+    image = models.ImageField(null=True, blank=True, upload_to='static/users/')
     saved_plants = models.ManyToManyField(Plant, blank=True)
     light_condition = models.PositiveIntegerField(null=True, default=None, choices=LIGHT_CHOICES)
     location_type_condition = models.PositiveIntegerField(null=True, default=None, choices=LOCATION_TYPE_CHOICES)
