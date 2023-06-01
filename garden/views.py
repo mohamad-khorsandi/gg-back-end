@@ -2,17 +2,22 @@ from rest_framework.generics import RetrieveAPIView, UpdateAPIView, CreateAPIVie
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import GardenSerializer, GardenUpdateSerializer, GardenCreateSerializer
+from .serializers import GardenSerializer, GardenUpdateSerializer, GardenCreateSerializer, GardenByIDSerializer
 from accounts.models import GardenOwnerProfile
 from .models import Garden
 from .permissions import GardenOwnerPerm
 
 
 class GardenGetIDAPI(RetrieveAPIView):
-    serializer_class = GardenSerializer
+    serializer_class = GardenByIDSerializer
     permission_classes = [AllowAny]
     queryset = Garden.objects.filter(is_verified=True)
     lookup_field = 'id'
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({'user': self.request.user})
+        return context
 
 
 class GardenAPI(RetrieveAPIView):
