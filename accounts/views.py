@@ -1,12 +1,10 @@
 import random
-
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.generics import ListAPIView, UpdateAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from plants.models import Plant
 from utils import send_otp_code
 from . import serializers
@@ -121,8 +119,6 @@ class SavedPlantList(APIView):
         plant = Plant.objects.filter(id=id_plant)
         if plant in user.saved_plants.all():
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        # PlantUserRelationship.objects.create(user=user, plant=plant[0])
-        # relation.saved_plants.add(plant[0])
         user.saved_plants.add(plant[0])
         return Response(status=status.HTTP_200_OK)
         # saved_plants = relation.saved_plants.all()
