@@ -28,7 +28,7 @@ class NormalUser(AbstractUser):
     phone_number = models.CharField(max_length=11, null=True, blank=True)
     is_garden_owner = models.BooleanField(default=False)
     image = models.ImageField(null=True, blank=True)
-    saved_plants = models.ManyToManyField(Plant)
+    saved_plants = models.ManyToManyField(Plant, blank=True)
 
     # override AbstractUser fields
     objects = UserManager()
@@ -41,12 +41,6 @@ class NormalUser(AbstractUser):
 
     def __str__(self):
         return self.email
-
-
-# class PlantUserRelationship(models.Model):
-#     user = models.ForeignKey('accounts.NormalUser', on_delete=models.CASCADE)
-#     plant = models.ForeignKey('plants.Plant', on_delete=models.CASCADE)
-#     # saved_plants = models.ManyToManyField(Plant)
 
 
 # -----------------------------------------------------------------------------------------
