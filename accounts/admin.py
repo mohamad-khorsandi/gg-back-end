@@ -16,7 +16,7 @@ class GardenOwnerAdmin(admin.ModelAdmin):
 
 @admin.register(NormalUser)
 class NormalUserAdmin(admin.ModelAdmin):
-    list_display = ['name', 'email', 'phone_number', 'is_garden_owner', 'light_condition', 'have_allergy',
+    list_display = ['name', 'email', 'phone_number', 'password', 'is_garden_owner', 'light_condition', 'have_allergy',
                     'location_type_condition', 'attention_need',
                     'have_pet']
 
