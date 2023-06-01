@@ -23,12 +23,35 @@ class UserManager(BaseUserManager):
 
 
 class NormalUser(AbstractUser):
+
+    LIGHT_CHOICES = [
+        (1, 'Low'),
+        (2, 'Medium'),
+        (3, 'High'),
+    ]
+    LOCATION_TYPE_CHOICES = [
+        (1, 'Apartment'),
+        (2, 'Close'),
+        (3, 'Open'),
+    ]
+    ATTENTION_NEED_CHOICES = [
+        (1, 'Everyday'),
+        (2, 'Weekly'),
+        (3, 'Monthly'),
+    ]
+
+
     name = models.CharField(max_length=100)
     email = models.EmailField(max_length=255, unique=True)
     phone_number = models.CharField(max_length=11, null=True, blank=True)
     is_garden_owner = models.BooleanField(default=False)
     image = models.ImageField(null=True, blank=True, upload_to='static/users/')
     saved_plants = models.ManyToManyField(Plant, blank=True)
+    light_condition = models.PositiveIntegerField(null=True, default=None, choices=LIGHT_CHOICES)
+    location_type_condition = models.PositiveIntegerField(null=True, default=None, choices=LOCATION_TYPE_CHOICES)
+    attention_need = models.PositiveIntegerField(null=True, default=None, choices=ATTENTION_NEED_CHOICES)
+    have_pet = models.BooleanField(null=True, default=None)
+    have_allergy = models.BooleanField(null=True, default=None)
 
     # override AbstractUser fields
     objects = UserManager()
@@ -55,7 +78,7 @@ class GardenOwnerProfile(models.Model):
     user = models.OneToOneField(NormalUser, on_delete=models.CASCADE)
     national_id = models.IntegerField(null=True, blank=True)
     business_id = models.IntegerField(null=True, blank=True)
-    license = models.ImageField(null=True, blank=True)
+    license = models.ImageField(upload_to='garden_license_pics', null=True, blank=True)
     is_verified = models.BooleanField(default=False)
 
     def __str__(self):
