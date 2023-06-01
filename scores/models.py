@@ -7,8 +7,8 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class GardenScore(models.Model):
-    garden = models.ForeignKey(Garden, on_delete=models.CASCADE, related_name='scores')
-    user = models.ForeignKey(NormalUser, on_delete=models.CASCADE)
+    garden = models.ForeignKey(Garden, on_delete=models.CASCADE, related_name='scores', blank=True)
+    user = models.ForeignKey(NormalUser, on_delete=models.CASCADE, blank=True)
     score = models.IntegerField(default=5, validators=[MinValueValidator(0), MaxValueValidator(5)])
     comment = models.TextField(null=True, blank=True)
     date = models.DateTimeField(default=datetime.datetime.now(), blank=True)
