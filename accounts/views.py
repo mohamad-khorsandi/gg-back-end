@@ -1,10 +1,12 @@
 import random
+
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.generics import ListAPIView, UpdateAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
 from plants.models import Plant
 from utils import send_otp_code
 from . import serializers
@@ -92,6 +94,15 @@ class GetUser(RetrieveAPIView):
 class UpdateUser(UpdateAPIView):
     queryset = NormalUser.objects.filter(is_active=True)
     serializer_class = serializers.UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+
+class UserSetDefaultConditionView(UpdateAPIView):
+    queryset = NormalUser.objects.filter(is_active=True)
+    serializer_class = serializers.UserDefaultConditionSerializer
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
