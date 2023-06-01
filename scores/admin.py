@@ -1,3 +1,7 @@
 from django.contrib import admin
+from .models import GardenScore
 
-# Register your models here.
+
+@admin.register(GardenScore)
+class GardenScoreAdmin(admin.ModelAdmin):
+    list_display = ['user', 'garden', 'score']
