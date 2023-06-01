@@ -32,3 +32,7 @@ class PlantDetails(RetrieveAPIView):
     lookup_field = 'id'
 
 
+class PlantList(ListAPIView):
+    serializer_class = PlantSerializer
+    permission_classes = [AllowAny]
+    queryset = Plant.objects.filter(is_valid=True)
