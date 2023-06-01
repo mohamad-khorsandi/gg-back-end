@@ -12,4 +12,5 @@ urlpatterns = [
     path('get-user/', views.GetUser.as_view(), name='get_user'),
     path('update-user/', views.UpdateUser.as_view(), name='update_user'),
     path('bookmark-plant/<int:id_plant>', views.SavedPlantList.as_view(), name='saved_plant_list'),
+    path('set_default_condition/', views.UserSetDefaultConditionView.as_view(), name='set_default_condition'),
 ]
