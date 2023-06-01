@@ -81,7 +81,7 @@ class UserLoginView(APIView):
 
 
 class GetUser(RetrieveAPIView):
-    permission_classes = [IsAuthenticated]  # no need to be self auth
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.UserSerializer
     queryset = NormalUser.objects.filter(is_active=True)
 
@@ -108,6 +108,8 @@ class UserLogoutView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
+        token = request.auth
+        token.delete()
         return Response(status=status.HTTP_200_OK)
 
 
