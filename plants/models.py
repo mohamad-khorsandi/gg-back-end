@@ -63,7 +63,6 @@ class Plant(models.Model):
     special_condition = models.TextField(null=True, blank=True)
     wikipedia_link = models.URLField(null=True, blank=True)
     main_img = models.ImageField(upload_to='static/plants/main_images/', default=None, null=True, blank=True)
-    user = models.ForeignKey('accounts.NormalUser', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
