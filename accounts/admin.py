@@ -1,6 +1,7 @@
 from django.contrib import admin
-from .models import NormalUser, TemporaryUser, GardenOwnerProfile
 from django.contrib.auth.models import Group
+
+from .models import NormalUser, TemporaryUser, GardenOwnerProfile
 
 
 @admin.register(TemporaryUser)
@@ -15,7 +16,9 @@ class GardenOwnerAdmin(admin.ModelAdmin):
 
 @admin.register(NormalUser)
 class NormalUserAdmin(admin.ModelAdmin):
-    list_display = ['name', 'email', 'phone_number', 'is_garden_owner']
+    list_display = ['name', 'email', 'phone_number', 'is_garden_owner', 'light_condition', 'have_allergy',
+                    'location_type_condition', 'attention_need',
+                    'have_pet']
 
 
 admin.site.unregister(Group)
