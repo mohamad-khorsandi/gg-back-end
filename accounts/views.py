@@ -181,9 +181,9 @@ class ChangePasswordView(APIView):
 class RemoveSavedPlantView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def delete(self, request, plant_id):
+    def delete(self, request, id_plant):
         try:
-            plant = request.user.saved_plants.get(id=plant_id)
+            plant = request.user.saved_plants.get(id=id_plant)
         except Plant.DoesNotExist:
             return Response('The plant is not in your saved plant list.', status=400)
         request.user.saved_plants.remove(plant)
