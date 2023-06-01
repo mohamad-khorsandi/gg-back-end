@@ -9,3 +9,10 @@ class ScoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = GardenScore
         fields = '__all__'
+
+
+class ScoreAddSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = GardenScore
+        fields = '__all__'

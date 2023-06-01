@@ -6,6 +6,7 @@ from .serializers import GardenSerializer, GardenUpdateSerializer, GardenCreateS
 from accounts.models import GardenOwnerProfile
 from .models import Garden
 from .permissions import GardenOwnerPerm
+from scores.serializers import ScoreAddSerializer
 
 
 class GardenGetIDAPI(RetrieveAPIView):
@@ -84,3 +85,27 @@ class GardenDeleteAPI(DestroyAPIView):
         user = GardenOwnerProfile.objects.filter(user=self.request.user)[0]
         garden = user.garden
         return garden
+
+
+class GardenAddScoreAPI(CreateAPIView):
+    serializer_class = ScoreAddSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = Garden.objects.all()
+    lookup_field = 'id'
+
+    def create(self, request, *args, **kwargs):
+        garden = self.get_object()
+        data = request.data
+        if garden is not None:
+            data['user'] = request.user.id
+            data['garden'] = kwargs['id']
+            serializer = self.get_serializer(data=data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            return Response(data=data, status=status.HTTP_201_CREATED)
+
+        data = self.get_serializer(data).data
+        return Response(data=data, status=status.HTTP_403_FORBIDDEN)
+
+
+
