@@ -11,7 +11,7 @@ class TemporaryUserAdmin(admin.ModelAdmin):
 
 @admin.register(GardenOwnerProfile)
 class GardenOwnerAdmin(admin.ModelAdmin):
-    list_display = ['user', 'national_id', 'business_id']
+    list_display = ['user', 'national_id', 'business_id', 'license']
 
 
 @admin.register(NormalUser)

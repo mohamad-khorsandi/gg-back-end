@@ -78,7 +78,7 @@ class GardenOwnerProfile(models.Model):
     user = models.OneToOneField(NormalUser, on_delete=models.CASCADE)
     national_id = models.IntegerField(null=True, blank=True)
     business_id = models.IntegerField(null=True, blank=True)
-    license = models.ImageField(null=True, blank=True)
+    license = models.ImageField(upload_to='garden_license_pics', null=True, blank=True)
     is_verified = models.BooleanField(default=False)
 
     def __str__(self):
