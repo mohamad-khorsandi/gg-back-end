@@ -28,3 +28,9 @@ class GardenOwnerSerializer(serializers.ModelSerializer):
     class Meta:
         model = GardenOwnerProfile
         fields = '__all__'
+
+
+class UserScoreSerializer(serializers.Serializer):
+    class Meta:
+        model = NormalUser
+        fields = ['name', 'image']
