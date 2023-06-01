@@ -26,6 +26,9 @@ def update_garden_avg_score(sender, instance, **kwargs):
     garden = instance.garden
     scores = GardenScore.objects.filter(garden=garden)
     total_score = sum([score.score for score in scores])
-    avg_score = total_score / len(scores)
+    if len(scores) == 0:
+        avg_score = 0.0
+    else:
+        avg_score = total_score / len(scores)
     garden.avg_score = avg_score
     garden.save()
