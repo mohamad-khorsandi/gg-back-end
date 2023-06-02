@@ -156,28 +156,6 @@ class UpdateGardenOwner(UpdateAPIView):
         return self.request.user
 
 
-# class ChangePasswordView(APIView):
-#     authentication_classes = [TokenAuthentication]
-#     permission_classes = [IsAuthenticated]
-#     serializer_class = serializers.ChangePasswordSerializer
-#
-#     def post(self, request):
-#         serializer = serializers.ChangePasswordSerializer(data=request.data)
-#
-#         if serializer.is_valid():
-#             user = request.user
-#             old_password = serializer.validated_data['old_password']
-#             new_password = serializer.validated_data['new_password']
-#
-#             if old_password != user.password:
-#                 return Response({'old_password': ['Wrong password.']}, status=status.HTTP_400_BAD_REQUEST)
-#
-#             user.set_password(new_password)
-#             user.save()
-#             return Response({'detail': 'Password changed successfully.'}, status=status.HTTP_200_OK)
-#
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 class ChangePasswordView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]

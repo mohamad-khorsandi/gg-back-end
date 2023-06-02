@@ -8,8 +8,7 @@ from plants.models import Plant
 
 class UserManager(BaseUserManager):
     def create_user(self, name, email, password, phone_number=None):
-        user = self.model(name=name, email=email, phone_number=phone_number)  # todo normalize email
-        user.set_password(password)
+        user = self.model(name=name, email=email, phone_number=phone_number, password=password)
         user.save(using=self._db)
         return user
 
