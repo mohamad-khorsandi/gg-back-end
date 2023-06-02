@@ -24,6 +24,12 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'email', 'name', 'phone_number', 'is_garden_owner', 'image']
 
 
+class UpdateUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NormalUser
+        fields = ['name', 'phone_number']
+
+
 class GardenOwnerSerializer(serializers.ModelSerializer):
     class Meta:
         model = GardenOwnerProfile
