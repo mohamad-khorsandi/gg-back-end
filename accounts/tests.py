@@ -1,7 +1,7 @@
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-
+from rest_framework.authtoken.models import Token
 from plants.models import Plant
 from .models import TemporaryUser, NormalUser
 
@@ -39,3 +39,16 @@ class AccountsTests(APITestCase):
         response_verify_code = self.client.post(url_verify_code, data=code)
         self.assertEqual(response_verify_code.status_code, status.HTTP_200_OK)
         signup_user = NormalUser.objects.get(email='Mary@example.com')
+
+        # --------------------- login test
+        url_user_login = reverse('accounts:user_login')
+        data_login = {
+            'email': 'Mary@example.com',
+            'password': '1234'
+        }
+        self.client.force_authenticate(user=signup_user)
+        response_user_login = self.client.post(url_user_login, data=data_login)
+        user_token = response_user_login.data['token']
+        login_user = Token.objects.get(key=user_token).user
+        self.assertEqual(response_user_login.status_code, status.HTTP_200_OK)
+        self.assertTrue(NormalUser.objects.filter(email=data_login['email']).exists())
