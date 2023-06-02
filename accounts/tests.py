@@ -58,3 +58,9 @@ class AccountsTests(APITestCase):
         response_save_plant = self.client.put(url_save_plant)
         self.assertEqual(response_save_plant.status_code, status.HTTP_200_OK)
         self.assertTrue(login_user.saved_plants.filter(id=self.plant.id).exists())
+
+        # --------------------- remove save plant test
+        url_remove_save_plant = reverse('accounts:remove_saved_plant', kwargs={'id_plant': self.plant.id})
+        response_delete_save_plant = self.client.delete(url_remove_save_plant)
+        self.assertEqual(response_delete_save_plant.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(login_user.saved_plants.filter(id=self.plant.id).exists())
