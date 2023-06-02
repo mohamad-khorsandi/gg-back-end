@@ -32,4 +32,4 @@ class PlantDetailSerializer(serializers.ModelSerializer):
 class PlantDetailGardenSerializer(serializers.ModelSerializer):
     class Meta:
         model = Garden
-        fields = ['id', 'name', 'avg_score']
+        fields = ['id', 'name', 'avg_score', 'profile_photo']

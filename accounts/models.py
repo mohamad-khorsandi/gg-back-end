@@ -23,7 +23,6 @@ class UserManager(BaseUserManager):
 
 
 class NormalUser(AbstractUser):
-
     LIGHT_CHOICES = [
         (1, 'Low'),
         (2, 'Medium'),
@@ -36,10 +35,10 @@ class NormalUser(AbstractUser):
     ]
     ATTENTION_NEED_CHOICES = [
         (1, 'Everyday'),
-        (2, 'Weekly'),
-        (3, 'Monthly'),
+        (2, 'Each two day'),
+        (3, 'Once a week'),
+        (4, 'Each two weeks'),
     ]
-
 
     name = models.CharField(max_length=100)
     email = models.EmailField(max_length=255, unique=True)
@@ -47,11 +46,11 @@ class NormalUser(AbstractUser):
     is_garden_owner = models.BooleanField(default=False)
     image = models.ImageField(null=True, blank=True, upload_to='static/users/')
     saved_plants = models.ManyToManyField(Plant, blank=True)
-    light_condition = models.PositiveIntegerField(null=True, default=None, choices=LIGHT_CHOICES)
-    location_type_condition = models.PositiveIntegerField(null=True, default=None, choices=LOCATION_TYPE_CHOICES)
-    attention_need = models.PositiveIntegerField(null=True, default=None, choices=ATTENTION_NEED_CHOICES)
-    have_pet = models.BooleanField(null=True, default=None)
-    have_allergy = models.BooleanField(null=True, default=None)
+    light_condition = models.PositiveIntegerField(null=True, blank=True, default=None, choices=LIGHT_CHOICES)
+    location_type_condition = models.PositiveIntegerField(null=True, blank=True, default=None, choices=LOCATION_TYPE_CHOICES)
+    attention_need = models.PositiveIntegerField(null=True, blank=True, default=None, choices=ATTENTION_NEED_CHOICES)
+    have_pet = models.BooleanField(null=True, blank=True, default=None)
+    have_allergy = models.BooleanField(null=True, blank=True, default=None)
 
     # override AbstractUser fields
     objects = UserManager()
