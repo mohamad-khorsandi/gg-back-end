@@ -26,7 +26,7 @@ class UserRegistrationView(APIView):
         data = serializer.data
         random_code = random.randint(1000, 9999)  # todo change this to str
         print(random_code)
-        send_otp_code(data['name'], data['email'], random_code)
+        #send_otp_code(data['name'], data['email'], random_code)
 
         last_code = TemporaryUser.objects.filter(email=data['email'])
         if last_code:
