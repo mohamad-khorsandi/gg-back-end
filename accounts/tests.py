@@ -1,7 +1,8 @@
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APITestCase
 from rest_framework.authtoken.models import Token
+from rest_framework.test import APITestCase
+
 from plants.models import Plant
 from .models import TemporaryUser, NormalUser
 
@@ -64,3 +65,52 @@ class AccountsTests(APITestCase):
         response_delete_save_plant = self.client.delete(url_remove_save_plant)
         self.assertEqual(response_delete_save_plant.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(login_user.saved_plants.filter(id=self.plant.id).exists())
+
+        # --------------------- change password test
+        data_change_password = {
+            'old_password': '1234',
+            'new_password': '4321'
+        }
+        url_change_password = reverse('accounts:change_password')
+        response_change_password = self.client.post(url_change_password, data=data_change_password)
+        self.assertEqual(response_change_password.status_code, status.HTTP_200_OK)
+        # self.assertEquals(login_user.password, '4321')
+
+
+class ChangePasswordViewTestCase(APITestCase):
+    def setUp(self):
+        self.user = NormalUser.objects.create_user(
+            name='testuser',
+            email='testuser@example.com',
+            password='testpass'
+        )
+        self.token = Token.objects.create(user=self.user)
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+
+    def test_change_password_success(self):
+        url = reverse('accounts:change_password')
+        data = {
+            'old_password': 'testpass',
+            'new_password': 'newpass'
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, {'detail': 'Password changed successfully.'})
+
+        # Check if password was changed successfully
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password('newpass'))
+
+    def test_change_password_wrong_old_password(self):
+        url = reverse('accounts:change_password')
+        data = {
+            'old_password': 'testpass2',
+            'new_password': 'newpass'
+        }
+        print(self.user.password)
+        response = self.client.post(url, data, format='json')
+        print(self.user.password)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data, {'old_password': ['Wrong password.']})
+        self.user.refresh_from_db()
+        # self.assertTrue(self.user.check_password('newpass'))
