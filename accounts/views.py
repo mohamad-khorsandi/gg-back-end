@@ -8,6 +8,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+import plants.serializers
 from plants.models import Plant
 from utils import send_otp_code
 from . import serializers
@@ -175,7 +176,7 @@ class ChangePasswordView(APIView):
             user.save()
             return Response({'detail': 'Password changed successfully.'}, status=status.HTTP_200_OK)
 
-        return
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class RemoveSavedPlantView(APIView):
@@ -188,3 +189,12 @@ class RemoveSavedPlantView(APIView):
             return Response('The plant is not in your saved plant list.', status=400)
         request.user.saved_plants.remove(plant)
         return Response('The plant has been removed from your saved plant list.', status=204)
+
+
+class GetBookmarkList(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = plants.serializers.PlantSerializer
+    queryset = NormalUser.objects.all()
+
+    def get_queryset(self):
+        return self.request.user.saved_plants
