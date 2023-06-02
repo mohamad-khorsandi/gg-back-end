@@ -30,11 +30,11 @@ class GardenOwnerSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-
 class UserScoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = NormalUser
         fields = ['name', 'image']
+
 
 class UserDefaultConditionSerializer(serializers.ModelSerializer):
     class Meta:
