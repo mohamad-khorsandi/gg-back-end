@@ -52,3 +52,9 @@ class AccountsTests(APITestCase):
         login_user = Token.objects.get(key=user_token).user
         self.assertEqual(response_user_login.status_code, status.HTTP_200_OK)
         self.assertTrue(NormalUser.objects.filter(email=data_login['email']).exists())
+
+        # --------------------- save plant test
+        url_save_plant = reverse('accounts:saved_plant_list', kwargs={'id_plant': self.plant.id})
+        response_save_plant = self.client.put(url_save_plant)
+        self.assertEqual(response_save_plant.status_code, status.HTTP_200_OK)
+        self.assertTrue(login_user.saved_plants.filter(id=self.plant.id).exists())
