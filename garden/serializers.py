@@ -38,6 +38,7 @@ class GardenSerializer(serializers.ModelSerializer):
 
 
 class GardenUpdateSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Garden
         exclude = ['id', 'garden_owner', 'business_code', 'address', 'avg_score', 'location', 'phone_number',

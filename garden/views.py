@@ -28,8 +28,20 @@ class GardenAPI(RetrieveAPIView):
 
     def get_object(self):
         user = GardenOwnerProfile.objects.filter(user=self.request.user)[0]
-        garden = user.garden
-        return garden
+        try:
+            garden = user.garden
+            return garden
+        except Exception as e:
+            print(repr(e))
+            return None
+
+    def retrieve(self, request, *args, **kwargs):
+        garden = self.get_object()
+        if garden is not None:
+            serializer = self.get_serializer(garden)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 class GardenUpdateAPI(UpdateAPIView):
@@ -38,17 +50,23 @@ class GardenUpdateAPI(UpdateAPIView):
 
     def get_object(self):
         user = GardenOwnerProfile.objects.filter(user=self.request.user)[0]
-        garden = user.garden
-        return garden
+        try:
+            garden = user.garden
+            return garden
+        except Exception as e:
+            print(repr(e))
+            return None
 
     def update(self, request, *args, **kwargs):
         garden = self.get_object()
-        garden.is_verified = False
-        garden.save()
-        serializer = self.get_serializer(garden, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        if garden is not None:
+            garden.is_verified = False
+            garden.save()
+            serializer = self.get_serializer(garden, data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 class GardenCreateAPI(CreateAPIView):
