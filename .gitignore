@@ -5,3 +5,5 @@
 __pycache__/
 */mi
 /*/migrations/*
+/media/static/*
+/static/*
