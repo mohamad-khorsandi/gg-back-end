@@ -169,10 +169,9 @@ class ChangePasswordView(APIView):
             old_password = serializer.validated_data['old_password']
             new_password = serializer.validated_data['new_password']
 
-            if old_password != user.password:
+            if not user.password == old_password:
                 return Response({'old_password': ['Wrong password.']}, status=status.HTTP_400_BAD_REQUEST)
-
-            user.set_password(new_password)
+            user.password = new_password
             user.save()
             return Response({'detail': 'Password changed successfully.'}, status=status.HTTP_200_OK)
 

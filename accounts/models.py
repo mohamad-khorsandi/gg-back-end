@@ -8,8 +8,7 @@ from plants.models import Plant
 
 class UserManager(BaseUserManager):
     def create_user(self, name, email, password, phone_number=None):
-        user = self.model(name=name, email=email, phone_number=phone_number)  # todo normalize email
-        user.set_password(password)
+        user = self.model(name=name, email=email, phone_number=phone_number, password=password)
         user.save(using=self._db)
         return user
 
@@ -108,7 +107,7 @@ class TemporaryUser(models.Model):
     created = models.DateTimeField(auto_now=True)
     name = models.CharField(max_length=100)
     password = models.CharField(max_length=128)
-    phone_number = models.CharField(max_length=11, unique=True)
+    phone_number = models.CharField(max_length=11, null=True, blank=True)
     is_garden_owner = models.BooleanField(default=False)
 
     def __str__(self):
