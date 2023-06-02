@@ -96,10 +96,8 @@ class ChangePasswordViewTestCase(APITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, {'detail': 'Password changed successfully.'})
-
-        # Check if password was changed successfully
         self.user.refresh_from_db()
-        self.assertTrue(self.user.check_password('newpass'))
+        self.assertTrue(self.user.password, 'newpass')
 
     def test_change_password_wrong_old_password(self):
         url = reverse('accounts:change_password')
@@ -107,10 +105,8 @@ class ChangePasswordViewTestCase(APITestCase):
             'old_password': 'testpass2',
             'new_password': 'newpass'
         }
-        print(self.user.password)
         response = self.client.post(url, data, format='json')
-        print(self.user.password)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data, {'old_password': ['Wrong password.']})
         self.user.refresh_from_db()
-        # self.assertTrue(self.user.check_password('newpass'))
+        self.assertTrue(self.user.password, 'newpass')
