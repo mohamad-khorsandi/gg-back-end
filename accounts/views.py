@@ -95,7 +95,7 @@ class GetUser(RetrieveAPIView):
 
 class UpdateUser(UpdateAPIView):
     queryset = NormalUser.objects.filter(is_active=True)
-    serializer_class = serializers.UserSerializer
+    serializer_class = serializers.UpdateUserSerializer
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
