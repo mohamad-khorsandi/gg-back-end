@@ -205,3 +205,65 @@ class UserRegistrationViewTestCase(APITestCase):
         self.assertEqual(temp_user.name, self.data['name'])
         self.assertEqual(temp_user.email, self.data['email'])
         self.assertIsNotNone(temp_user.code)
+
+
+# ----------------------------- save plant test
+class SavedPlantListTestCase(APITestCase):
+
+    def setUp(self):
+        self.url = reverse('accounts:saved_plant_list', kwargs={'id_plant': 1})
+        self.client = APIClient()
+        self.user = NormalUser.objects.create(name='testuser', password='testpassword', phone_number='testphone')
+        self.client.force_authenticate(user=self.user)
+        self.plant = Plant.objects.create(name="رز", description="گل", maintenance="در آب وایتکس ریخته شود", type=1,
+                                          light_intensity=2,
+                                          temperature=20, water=3, growth=1, attention_need=1, season=3,
+                                          is_seasonal=False, fragrance=False, pet_compatible=True,
+                                          allergy_compatible=True, edible=False, special_condition="ندارد",
+                                          is_valid=True)
+
+    def test_add_saved_plant(self):
+        response = self.client.put(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn(self.plant, self.user.saved_plants.all())
+
+    def test_add_existing_saved_plant(self):
+        self.user.saved_plants.add(self.plant)
+        response = self.client.put(self.url)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_unauthenticated_user(self):
+        self.client.force_authenticate(user=None)
+        response = self.client.put(self.url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+# ----------------------------- remove save plant test
+class RemoveSavedPlantViewTestCase(APITestCase):
+    def setUp(self):
+        self.url = reverse('accounts:remove_saved_plant', kwargs={'id_plant': 1})
+        self.client = APIClient()
+        self.user = NormalUser.objects.create(name='testuser', password='testpassword', phone_number='testphone')
+        self.client.force_authenticate(user=self.user)
+        self.plant = Plant.objects.create(name="رز", description="گل", maintenance="در آب وایتکس ریخته شود", type=1,
+                                          light_intensity=2,
+                                          temperature=20, water=3, growth=1, attention_need=1, season=3,
+                                          is_seasonal=False, fragrance=False, pet_compatible=True,
+                                          allergy_compatible=True, edible=False, special_condition="ندارد",
+                                          is_valid=True)
+
+    def test_remove_saved_plant(self):
+        self.user.saved_plants.add(self.plant)
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertNotIn(self.plant, self.user.saved_plants.all())
+
+    def test_remove_unsaved_plant(self):
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertNotIn(self.plant, self.user.saved_plants.all())
+
+    def test_unauthenticated_user(self):
+        self.client.force_authenticate(user=None)
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
