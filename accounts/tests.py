@@ -1,10 +1,11 @@
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.authtoken.models import Token
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient
 
 from plants.models import Plant
 from .models import TemporaryUser, NormalUser
+from .serializers import UserLoginSerializer
 
 
 class AccountsTests(APITestCase):
@@ -77,7 +78,8 @@ class AccountsTests(APITestCase):
         # self.assertEquals(login_user.password, '4321')
 
 
-class ChangePasswordViewTestCase(APITestCase):
+# ----------------------------- change password
+class ChangePasswordTestCase(APITestCase):
     def setUp(self):
         self.user = NormalUser.objects.create_user(
             name='testuser',
@@ -110,3 +112,96 @@ class ChangePasswordViewTestCase(APITestCase):
         self.assertEqual(response.data, {'old_password': ['Wrong password.']})
         self.user.refresh_from_db()
         self.assertTrue(self.user.password, 'newpass')
+
+
+# ----------------------------- login test
+class UserLoginTestCase(APITestCase):
+    url = reverse('accounts:user_login')
+
+    def setUp(self):
+        self.user = NormalUser.objects.create(
+            email='testuser@example.com',
+            password='testpassword123'
+        )
+        self.client = APIClient()
+
+    def test_user_login_success(self):
+        data = {
+            'email': 'testuser@example.com',
+            'password': 'testpassword123'
+        }
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('token', response.data)
+
+    def test_user_login_failure(self):
+        data = {
+            'email': 'testuser@example.com',
+            'password': 'wrongpassword'
+        }
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_login_serializer_invalid(self):
+        data = {
+            'email': 'testuser@example.com',
+            'password': ''
+        }
+        serializer = UserLoginSerializer(data=data)
+        self.assertFalse(serializer.is_valid())
+
+    def test_user_login_token_created(self):
+        data = {
+            'email': 'testuser@example.com',
+            'password': 'testpassword123'
+        }
+        response = self.client.post(self.url, data)
+        token = Token.objects.get(user=self.user)
+        self.assertEqual(response.data['token'], token.key)
+
+
+# ----------------------------- signup test
+class UserRegistrationViewTestCase(APITestCase):
+
+    def setUp(self):
+        self.url = reverse('accounts:user_register')
+        self.client = APIClient()
+        self.data = {
+            'name': 'John Doe',
+            'email': 'johndoe@example.com',
+            'password': 'testpassword123',
+            'phone_number': '09132561223',
+            'is_garden_owner': False
+        }
+
+    def test_user_registration_success(self):
+        response = self.client.post(self.url, self.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(TemporaryUser.objects.count(), 1)
+
+    def test_user_registration_serializer_invalid(self):
+        data = {
+            'name': 'Jane Doe',
+            'email': 'janedoe@example.com',
+            'phone_number': '09132561223',
+            'password': '',
+        }
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(TemporaryUser.objects.count(), 0)
+
+    def test_user_registration_code_update(self):
+        self.client.post(self.url, self.data)
+        temp_user = TemporaryUser.objects.get(email=self.data['email'])
+        old_code = temp_user.code
+        self.client.post(self.url, self.data)
+        temp_user.refresh_from_db()
+        new_code = temp_user.code
+        self.assertNotEqual(old_code, new_code)
+
+    def test_user_registration_code_creation(self):
+        response = self.client.post(self.url, self.data)
+        temp_user = TemporaryUser.objects.get(email=self.data['email'])
+        self.assertEqual(temp_user.name, self.data['name'])
+        self.assertEqual(temp_user.email, self.data['email'])
+        self.assertIsNotNone(temp_user.code)
