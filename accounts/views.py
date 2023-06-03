@@ -131,10 +131,10 @@ class SavedPlantList(APIView):
 
     def put(self, request, id_plant):
         user = request.user
-        plant = Plant.objects.filter(id=id_plant)
+        plant = Plant.objects.get(id=id_plant)
         if plant in user.saved_plants.all():
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        user.saved_plants.add(plant[0])
+        user.saved_plants.add(plant)
         return Response(status=status.HTTP_200_OK)
 
 
