@@ -1,5 +1,4 @@
 # Green-Garden
-This is our project for the software engineering course in University of Isfahan. 2023 | 1401
 
 
 ## Installation
